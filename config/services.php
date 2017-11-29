@@ -15,8 +15,8 @@ return [
     */
 
     'mailgun' => [
-        'domain' => 'mail.iooik.com',
-        'secret' => 'key-fe7665f7701f87f5e4d4c97190c10c8d',
+        'domain' => env('MAIL_DOMAIN'),
+        'secret' => env('MAIL_SECRET'),
     ],
 
     'ses' => [
