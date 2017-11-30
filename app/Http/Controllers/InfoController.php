@@ -233,7 +233,7 @@ class InfoController extends Controller
     {
         $title = '我的申请';
 
-        $source = \App\Request::with('info.user')->where('created_at', '>=', Carbon::today());
+        $source = \App\Request::with('info.user')->where('user_id', Auth::id());
         $filter = Lego::filter($source);
         $filter->addText('info.user.name', '发布人');
         $filter->addText('info.start', '出发地点');
@@ -252,7 +252,7 @@ class InfoController extends Controller
                 return link_to(action('InfoController@getDetail', ['id' => $request->info->id]), '详细车主信息', ['target' => '_blank']);
             }
         });
-        $grid->paginate(30);
+        $grid->paginate(30)->orderBy('created_at', 'DESC');
 
         return $grid->view('home', compact('title', 'grid'));
     }

@@ -36,6 +36,7 @@
                                         <strong>{{ $errors->first('email') }}</strong>
                                     </span>
                                 @endif
+                                <span style="color:darkred">邮箱可以重置密码(如果使用 qq 邮箱, 其自带的保护机制会把重置密码邮件自动归类到垃圾箱,请注意!)</span>
                             </div>
                         </div>
 
