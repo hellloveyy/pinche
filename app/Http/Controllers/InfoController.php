@@ -37,7 +37,8 @@ class InfoController extends Controller
             ->values(Info::listGoWheres());
         $edit->addText('start', '出发地');
         $edit->addText('end', '目的地');
-        $edit->addNumber('amount_yuan', '费用(人)');
+        $edit->addNumber('amount_yuan', '费用(人)')
+            ->note('请大家维持原价');
         $edit->addDatetime('start_at', '出发时间')
             ->note('请仔细检查出发时间!');
         $edit->addSelect('num', '空余座位数')
@@ -49,6 +50,7 @@ class InfoController extends Controller
         $edit->addText('note', '补充信息')
             ->note('包含途径点等信息,自由发挥');
         $edit->addHidden('user_id')->default(Auth::id());
+        $edit->required();
 
         Info::saving(function (Info $info) {
             // 同一天同一人同一方向只能有一条有效信息,防止有人多次刷屏
@@ -198,7 +200,7 @@ class InfoController extends Controller
             );
         }
         return Lego::confirm(
-            '确认同意此申请? 此操作不能撤回',
+            '确认驳回此申请? 此操作不能撤回',
             function ($sure) use ($request) {
                 if ($sure) {
                     $request->status = \App\Request::STATUS_申请通过;

@@ -15,7 +15,7 @@ class Request extends Model
         return [
             self::STATUS_申请中,
             self::STATUS_申请通过,
-            self::STATUS_申请中,
+            self::STATUS_驳回,
         ];
     }
 

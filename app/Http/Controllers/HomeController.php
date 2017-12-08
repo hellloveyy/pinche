@@ -51,8 +51,11 @@ class HomeController extends Controller
         $grid->addLeftTopButton('我的申请', action('InfoController@getMyRequest'))
             ->attribute('target', '_blank')
             ->bootstrapStyle('success');
+        $grid->addRightTopButton('! 使用须知 !', action('HomeController@getHasKnow'))
+            ->attribute('target', '_blank')
+            ->bootstrapStyle('danger');
 
-        $grid->add('id', '提交申请')->cell(function ($_, Info $info) {
+        $grid->add('id', '操作')->cell(function ($_, Info $info) {
             if (Auth::id() == $info->user_id) { // 发布人
                 if ($info->status === Info::STATUS_撤销) {
                     return '';
@@ -100,5 +103,11 @@ class HomeController extends Controller
         $grid->paginate(30)->orderBy('start_at', 'desc');
 
         return $grid->view('home', compact('title', 'grid'));
+    }
+
+    public function getHasKnow()
+    {
+        $title = '使用须知';
+        return view('know', compact('title'));
     }
 }

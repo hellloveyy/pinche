@@ -14,6 +14,7 @@
 Auth::routes();
 
 Route::get('/', 'HomeController@index');
+Route::get('know', 'HomeController@getHasKnow');
 
 Route::any('info', 'InfoController@anyCreateInfo');
 Route::any('withdraw', 'InfoController@getWithdraw');
