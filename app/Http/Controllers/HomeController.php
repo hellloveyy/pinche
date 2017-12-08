@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Info;
 use App\User;
 use Carbon\Carbon;
+use Encore\Admin\Form\Field\Html;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\HtmlString;
 use Lego\Lego;
 
 class HomeController extends Controller
@@ -73,7 +75,9 @@ class HomeController extends Controller
                     ? $request->status
                     : ($info->status === Info::STATUS_撤销
                         ? '撤回信息无法申请'
-                        : link_to(action('InfoController@getRequest', ['id' => $info->id]), '申请'));
+                        : ($info->requests->where('status', \App\Request::STATUS_申请通过)->count() === $info->num
+                            ? new HtmlString("<span style='color:red'>!车满!</span>")
+                            : link_to(action('InfoController@getRequest', ['id' => $info->id]), '申请')));
             }
             return $str;
         });
@@ -95,7 +99,7 @@ class HomeController extends Controller
         $grid->add('num', '人数');
         $grid->add('had_num', '已通过申请人数')->cell(function ($_, Info $info) {
             return $info->requests->where('status', \App\Request::STATUS_申请通过)->count() === $info->num
-                ? '!车满!'
+                ? new HtmlString("<span style='color:red'>!车满!</span>")
                 : $info->requests->where('status', \App\Request::STATUS_申请通过)->count();
         });
         $grid->add('amount_yuan', '费用(人)');
