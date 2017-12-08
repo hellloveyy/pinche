@@ -94,7 +94,9 @@ class HomeController extends Controller
         });
         $grid->add('num', '人数');
         $grid->add('had_num', '已通过申请人数')->cell(function ($_, Info $info) {
-            return $info->requests->where('status', \App\Request::STATUS_申请通过)->count();
+            return $info->requests->where('status', \App\Request::STATUS_申请通过)->count() === $info->num
+                ? '!车满!'
+                : $info->requests->where('status', \App\Request::STATUS_申请通过)->count();
         });
         $grid->add('amount_yuan', '费用(人)');
         $grid->add('status', '信息状态');
