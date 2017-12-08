@@ -203,7 +203,7 @@ class InfoController extends Controller
             '确认驳回此申请? 此操作不能撤回',
             function ($sure) use ($request) {
                 if ($sure) {
-                    $request->status = \App\Request::STATUS_申请通过;
+                    $request->status = \App\Request::STATUS_驳回;
                     $request->saveOrFail();
                 }
             }
