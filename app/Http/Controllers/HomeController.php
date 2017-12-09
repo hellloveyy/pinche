@@ -96,7 +96,7 @@ class HomeController extends Controller
                 6 => '六',
             ][$info->start_at->dayOfWeek] ?? null;
         });
-        $grid->add('num', '人数');
+        $grid->add('num', '座位数');
         $grid->add('had_num', '已通过申请人数')->cell(function ($_, Info $info) {
             return $info->requests->where('status', \App\Request::STATUS_申请通过)->count() === $info->num
                 ? new HtmlString("<span style='color:red'>!车满!</span>")
