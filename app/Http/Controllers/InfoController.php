@@ -53,12 +53,12 @@ class InfoController extends Controller
         $edit->required();
 
         Info::saving(function (Info $info) {
-            // 同一天同一人同一方向只能有一条有效信息,防止有人多次刷屏
+            // 同一天同一人同一方向只能有一条有效信息,防止有人多次刷屏 || 超管可以录入
             if (Info::where('status', Info::STATUS_拼人中)
                 ->where('go_where', $info->go_where)
                 ->where('user_id', Auth::id())
                 ->whereBetween('start_at', [$info->start_at->startOfDay(), $info->start_at->endOfDay()])
-                ->exists()) {
+                ->exists() && !in_array(Auth::id(), [1, 2])) {
                 return Lego::message(
                     '实在抱歉 -- O(∩_∩)O -- 同一天同一人同一方向只能有一条信息,防止有人多次刷屏'
                 );
