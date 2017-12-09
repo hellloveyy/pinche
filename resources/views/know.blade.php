@@ -38,7 +38,7 @@
                                 <div>
                                     <ul>
                                         <li>
-                                            <a href="#">没有太多时间,以后会录制视频教程</a>
+                                            <a href="https://v.qq.com/x/page/i0516k6v2mr.html">使用简介</a>
                                         </li>
                                     </ul>
                                 </div>
