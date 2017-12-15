@@ -26,9 +26,9 @@
                                 <hr>
                                 <div>
                                     <ol>
-                                        <li><a href="http://7xnaaf.com1.z0.glb.clouddn.com/%E7%99%BB%E5%BD%95:%E6%B3%A8%E5%86%8C:%E6%89%BE%E5%9B%9E%E5%AF%86%E7%A0%81.pdf">登录/注册/找回密码</a></li>
-                                        <li><a href="http://7xnaaf.com1.z0.glb.clouddn.com/%E5%88%97%E8%A1%A8%E9%A1%B5%E4%BB%A5%E5%8F%8A%E4%B8%BB%E8%A6%81%E6%B5%81%E7%A8%8B.pdf">列表页以及主要流程</a></li>
-                                        <li><a href="http://7xnaaf.com1.z0.glb.clouddn.com/%E5%88%9B%E5%BB%BA%E5%8F%91%E5%B8%83%E4%BF%A1%E6%81%AF.pdf">创建发布信息|历史列表|我的申请</a></li>
+                                        <li><a href="#">登录/注册/找回密码</a></li>
+                                        <li><a href="#">列表页以及主要流程</a></li>
+                                        <li><a href="#">创建发布信息|历史列表|我的申请</a></li>
                                     </ol>
                                 </div>
                             </div>
@@ -38,7 +38,7 @@
                                 <div>
                                     <ul>
                                         <li>
-                                            <a href="https://v.qq.com/x/page/i0516k6v2mr.html">使用简介</a>
+                                            <a href="https://v.qq.com/x/page/i0516k6v2mr.html">公众号使用流程准备中...</a>
                                         </li>
                                     </ul>
                                 </div>

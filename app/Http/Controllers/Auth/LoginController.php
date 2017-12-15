@@ -21,13 +21,6 @@ class LoginController extends Controller
     use AuthenticatesUsers;
 
     /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/';
-
-    /**
      * Create a new controller instance.
      *
      * @return void
@@ -40,5 +33,10 @@ class LoginController extends Controller
     public function username()
     {
         return 'mobile';
+    }
+
+    public function redirectTo()
+    {
+        return redirect()->back();
     }
 }

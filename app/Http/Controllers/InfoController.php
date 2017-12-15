@@ -24,10 +24,62 @@ class InfoController extends Controller
         $this->middleware('auth');
     }
 
-    // 创建发布信息
-    public function anyCreateInfo()
+    /**
+     * 发布车找人
+     */
+    public function anyCreateCar()
     {
-        $title = '创建拼车信息';
+        $title = '发布车找人';
+
+        $id = Input::get('id');
+        $status = Input::get('status');
+
+        $edit = Lego::form(Info::find($id) ?? new Info());
+
+        $edit->addSelect('go_where', '方向')
+            ->values(Info::listGoWheres());
+        $edit->addText('start', '出发地');
+        $edit->addText('end', '目的地');
+        $edit->addNumber('amount_yuan', '费用(人)')
+            ->note('请大家维持原价');
+        $edit->addDatetime('start_at', '出发时间')
+            ->note('请仔细检查出发时间!');
+        $edit->addSelect('num', '空余座位数')
+            ->values(Info::listNumbers());
+        $edit->addText('plate_number', '车牌号');
+        $edit->addText('color', '车身颜色');
+        $edit->addText('car_brand', '汽车品牌');
+        $edit->addText('mobile', '联系手机号');
+        $edit->addText('note', '补充信息')
+            ->note('包含途径点等信息,自由发挥');
+        $edit->addHidden('user_id')->default(Auth::id());
+        $edit->addHidden('cate')->default(Info::CATE_车找人);
+        if ($status === Info::STATUS_进行中) {
+            $edit->addHidden('status')->default(Info::STATUS_进行中);
+        }
+        $edit->required();
+
+        Info::saving(function (Info $info) {
+            // 同一天同一人同一方向只能有一条有效信息,防止有人多次刷屏 || 超管可以录入
+            if (Info::where('status', Info::STATUS_进行中)
+                ->where('go_where', $info->go_where)
+                ->where('user_id', Auth::id())
+                ->whereBetween('start_at', [$info->start_at->startOfDay(), $info->start_at->endOfDay()])
+                ->exists()) {
+                return Lego::message(
+                    '实在抱歉 -- O(∩_∩)O -- 同一天同一人同一方向只能有一条信息,防止有人多次刷屏'
+                );
+            }
+        });
+        return $edit->view('info.info', compact('title', 'edit'));
+    }
+
+    /**
+     * 发布人找车
+     */
+    public function anyCreatePeople()
+    {
+        $title = '发布车找人';
 
         $id = Input::get('id');
 
@@ -50,82 +102,60 @@ class InfoController extends Controller
         $edit->addText('note', '补充信息')
             ->note('包含途径点等信息,自由发挥');
         $edit->addHidden('user_id')->default(Auth::id());
+        $edit->addHidden('cate')->default(Info::CATE_人找车);
         $edit->required();
 
-        Info::saving(function (Info $info) {
-            // 同一天同一人同一方向只能有一条有效信息,防止有人多次刷屏 || 超管可以录入
-            if (Info::where('status', Info::STATUS_拼人中)
-                ->where('go_where', $info->go_where)
-                ->where('user_id', Auth::id())
-                ->whereBetween('start_at', [$info->start_at->startOfDay(), $info->start_at->endOfDay()])
-                ->exists() && !in_array(Auth::id(), [1, 2])) {
-                return Lego::message(
-                    '实在抱歉 -- O(∩_∩)O -- 同一天同一人同一方向只能有一条信息,防止有人多次刷屏'
-                );
-            }
-        });
         return $edit->view('info.info', compact('title', 'edit'));
     }
 
-    // 历史发布列表今天以前
+    /**
+     * 车主历史发布
+     */
     public function getHistoryList()
     {
         $title = '历史信息';
-        $source = Info::where('user_id', Auth::id())->where('start_at', '<', Carbon::now());
+        $source = Info::where('user_id', Auth::id())
+            ->where('start_at', '<', Carbon::now())
+            ->where('cate', Info::CATE_车找人);
 
         $grid = Lego::grid($source);
 
         $grid->add('id', '编辑详细')->cell(function ($_, Info $info) {
-            return link_to(action('InfoController@anyCreateInfo', ['id' => $info->id]), '编辑', ['target' => '_blank']);
+            return link_to(action('InfoController@anyCreateCar', ['id' => $info->id, 'status' => Info::STATUS_进行中])
+                , '修改时间等信息重新发布'
+                , ['target' => '_blank']);
         });
         $grid->add('go_where', '行进方向');
         $grid->add('start', '出发地');
         $grid->add('end', '目的地');
         $grid->add('start_at', '出发时间');
-        $grid->add('num', '人数');
+        $grid->add('weekend', '星期')->cell(function ($_, Info $info) {
+            return [
+                0 => '日',
+                1 => '一',
+                2 => '二',
+                3 => '三',
+                4 => '四',
+                5 => '五',
+                6 => '六',
+            ][$info->start_at->dayOfWeek] ?? null;
+        });
+        $grid->add('num', '座位数');
+        $grid->add('mobile', '手机号');
+        $grid->add('plate_number', '车牌号');
+        $grid->add('color', '车身颜色');
+        $grid->add('car_brand', '汽车品牌');
         $grid->add('amount_yuan', '费用(人)');
         $grid->add('note', '补充');
-
-        $grid->paginate(30)->orderBy('id', 'desc');
-
-        return $grid->view('home', compact('title', 'grid'));
-    }
-
-    // 以下为申请流程
-    public function getRequestList()
-    {
-        $title = '我的发布申请列表';
-
-        $infoId = Input::get('id');
-        $source = \App\Request::with('user', 'info')->where('info_id', $infoId);
-        $filter = Lego::filter($source);
-        $filter->addText('user.name', '申请人');
-        $filter->addText('user.mobile', '申请手机号');
-        $filter->addSelect('info.go_where', '申请同行方向')->values(Info::listGoWheres());
-        $filter->addSelect('status', '申请状态')->values(\App\Request::listStatus());
-
-        $grid = Lego::grid($filter);
-
-        $grid->add('id', '操作')->cell(function ($_, \App\Request $request) {
-            if ($request->status === \App\Request::STATUS_申请中) {
-                return link_to(action('InfoController@getApprove', ['id' => $request->id]), '同意');
-            }
-            if ($request->status === \App\Request::STATUS_申请通过) {
-                return link_to(action('InfoController@getReject', ['id' => $request->id]), '驳回');
-            }
-        });
-        $grid->add('user.name', '申请人');
-        $grid->add('user.mobile', '申请人手机号');
-        $grid->add('info.go_where', '申请同行方向');
-        $grid->add('status', '申请状态');
-        $grid->add('created_at', '申请时间');
-        $grid->paginate(30)->orderBy('created_at');
+        $grid->paginate(15)->orderBy('start_at', 'desc');
 
         return $grid->view('home', compact('title', 'grid'));
     }
 
-    // 申请加入
-    public function getRequest()
+    /**
+     * 车主确认已拼满
+     */
+    public function getFullPeople()
     {
         $info = Info::find(Input::get('id'));
         if (!$info) {
@@ -134,158 +164,37 @@ class InfoController extends Controller
             );
         }
         return Lego::confirm(
-            '确认申请乘坐此条信息吗?保证大家的效率,请认真选择!',
+            '请确认已经拼满车?此操作不可逆,如果乘车人取消或者有变动请重新发布车找人!确认之后将在乘客的车找人列表中下架!',
             function ($sure) use ($info) {
                 if ($sure) {
-                    $request = new \App\Request();
-                    $request->info_id = $info->id;
-                    $request->user_id = Auth::id();
-                    $request->status = \App\Request::STATUS_申请中;
-                    $request->saveOrFail();
-                }
-            }
-        );
-    }
-
-    // 同意申请
-    public function getApprove()
-    {
-        $request = \App\Request::find(Input::get('id'));
-        if (!$request) {
-            return Lego::message(
-                '没有此申请,请在列表中重新选择'
-            );
-        }
-        // 申请相关的 info
-        $info = $request->info;
-
-        // 人满不能申请
-        $approveNum = $info->requests->where('status', \App\Request::STATUS_申请通过)->count();
-        if ($approveNum >= $info->num) {
-            return Lego::message(
-                '乘坐人已满 ' . $request->info->num . ' 人,不能再同意申请!'
-            );
-        }
-        // 同一天 同一方向 同一人不能被同意两次
-        $checkOnlyOne = \App\Request::where('status', \App\Request::STATUS_申请通过)
-            ->where('user_id', $request->user_id)
-            ->whereHas('info', function ($query) use ($info) {
-                return $query->where('go_where', $info->go_where)
-                    ->whereBetween('start_at', [$info->start_at->startOfDay(), $info->start_at->endOfDay()]);
-            })
-            ->first();
-        if ($checkOnlyOne) {
-            return Lego::message(
-                '此人已经被他人抢走啦,不能再同意申请!'
-            );
-        }
-        return Lego::confirm(
-            '确认同意此申请? 此操作不能撤回',
-            function ($sure) use ($request) {
-                if ($sure) {
-                    $request->status = \App\Request::STATUS_申请通过;
-                    $request->saveOrFail();
-                }
-            }
-        );
-    }
-
-    // 发布人驳回申请通过的申请
-    public function getReject()
-    {
-        $request = \App\Request::find(Input::get('id'));
-        if (!$request) {
-            return Lego::message(
-                '没有此申请,请在列表中重新选择'
-            );
-        }
-        return Lego::confirm(
-            '确认驳回此申请? 此操作不能撤回',
-            function ($sure) use ($request) {
-                if ($sure) {
-                    $request->status = \App\Request::STATUS_驳回;
-                    $request->saveOrFail();
-                }
-            }
-        );
-    }
-
-    // 发布人撤回发布的信息
-    public function getWithdraw()
-    {
-        $info = Info::find(Input::get('id'));
-        if (!$info) {
-            return Lego::message(
-                '没有此条信息,请在列表中重新选择撤回'
-            );
-        }
-        return Lego::confirm(
-            '确认撤销此条信息吗?请不要频繁撤销!这样会给他人不好的体验!请尽量确认好再发布!经常撤销者影响他人乘坐者会被封号!',
-            function ($sure) use ($info) {
-                if ($sure) {
-                    $info->status = Info::STATUS_撤销;
+                    $info->status = Info::STATUS_车满;
                     $info->saveOrFail();
                 }
             }
         );
     }
 
-    // 我的申请列表
-    public function getMyRequest()
+    /**
+     * 寻车成功
+     */
+    public function getFindCar()
     {
-        $title = '我的申请';
-
-        $source = \App\Request::with('info.user')->where('user_id', Auth::id());
-        $filter = Lego::filter($source);
-        $filter->addText('info.user.name', '发布人');
-        $filter->addText('info.start', '出发地点');
-        $filter->addSelect('info.go_where', '申请同行方向')->values(Info::listGoWheres());
-        $filter->addSelect('status', '申请状态')->values(\App\Request::listStatus());
-
-        $grid = Lego::grid($filter);
-
-        $grid->add('info.user.name', '发布人');
-        $grid->add('info.start', '出发地点');
-        $grid->add('info.go_where', '申请同行方向');
-        $grid->add('status', '申请状态');
-        $grid->add('created_at', '申请时间');
-        $grid->add('detail', '详细信息')->cell(function ($_, \App\Request $request) {
-            if ($request->status === \App\Request::STATUS_申请通过) {
-                return link_to(action('InfoController@getDetail', ['id' => $request->info->id]), '详细车主信息', ['target' => '_blank']);
-            }
-        });
-        $grid->paginate(30)->orderBy('created_at', 'DESC');
-
-        return $grid->view('home', compact('title', 'grid'));
-    }
-
-    public function getDetail()
-    {
-        $title = '车主详细信息';
-
-        $id = Input::get('id');
-        if (!($info = Info::find($id))) {
+        $info = Info::find(Input::get('id'));
+        if (!$info) {
             return Lego::message(
-                '没有此条车主信息'
+                '没有此条信息,请在列表中重新选择'
             );
         }
-        $edit = Lego::form($info);
-
-        $edit->addSelect('go_where', '方向')
-            ->values(Info::listGoWheres());
-        $edit->addText('start', '出发地');
-        $edit->addText('end', '目的地');
-        $edit->addNumber('amount_yuan', '费用(人)');
-        $edit->addDatetime('start_at', '出发时间');
-        $edit->addSelect('num', '空余座位数')
-            ->values(Info::listNumbers());
-        $edit->addText('plate_number', '车牌号');
-        $edit->addText('color', '车身颜色');
-        $edit->addText('car_brand', '汽车品牌');
-        $edit->addText('mobile', '联系手机号');
-        $edit->addText('note', '补充信息');
-        $edit->readonly();
-
-        return $edit->view('info.info', compact('title', 'edit'));
+        return Lego::confirm(
+            '请确认已经拼到车?此操作不可逆,如果车主取消或者有变动请重新发布人找车!确认之后将在车主的人找车列表中下架!',
+            function ($sure) use ($info) {
+                if ($sure) {
+                    $info->status = Info::STATUS_寻车成功;
+                    $info->saveOrFail();
+                }
+            }
+        );
     }
+
+
 }

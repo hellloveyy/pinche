@@ -10,13 +10,16 @@ class Info extends Model
 {
     use SoftDeletes;
 
-    const STATUS_拼人中 = '拼人中';
+    const STATUS_进行中 = '进行中';
+    const STATUS_车满 = '车满';
+    const STATUS_寻车成功 = '寻车成功';
     const STATUS_撤销 = '撤销';
+
+    const CATE_车找人 = '车找人';
+    const CATE_人找车 = '人找车';
 
     const GO_WHERE_香河方向 = '香河方向';
     const GO_WHERE_北京方向 = '北京方向';
-
-    const MY_我发布的信息 = '我发布的信息';
 
     public $dates = ['start_at'];
 
@@ -33,38 +36,9 @@ class Info extends Model
         ];
     }
 
-    public static function listStatus()
-    {
-        return [
-            self::STATUS_拼人中,
-            self::STATUS_撤销
-        ];
-    }
-
-    public function requests()
-    {
-        return $this->hasMany(Request::class, 'info_id');
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * 增加合同量房状态的筛选
-     */
-    public function scopeMyReleased($query, $status)
-    {
-        if (!$status) {
-            return $query;
-        }
-
-        if ($status === self::MY_我发布的信息) {
-            return $query->where('user_id', Auth::id());
-        }
-
-        return $query;
     }
 
 }

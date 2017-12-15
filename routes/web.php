@@ -13,21 +13,26 @@
 
 Auth::routes();
 
-Route::get('/', 'HomeController@index');
+Route::get('/', 'UserController@getMyInfo');
 Route::get('know', 'HomeController@getHasKnow');
-
-Route::any('info', 'InfoController@anyCreateInfo');
-Route::any('withdraw', 'InfoController@getWithdraw');
-Route::any('tempinfo', 'InfoController@anyCreateInfoFormTemp');
 Route::any('history', 'InfoController@getHistoryList');
 
+// 车找人
+Route::get('car-find-people', 'HomeController@getCarFindPeople');
+// 人找车
+Route::get('people-find-car', 'HomeController@getPeopleFindCar');
 
-Route::any('request', 'InfoController@getRequest'); // 点击申请
-Route::any('request-list', 'InfoController@getRequestList');  // 信息关联的申请列表
-Route::any('approve', 'InfoController@getApprove'); // 点击同意申请
-Route::any('reject', 'InfoController@getReject'); // 点击驳回申请
-Route::any('my-released', 'InfoController@getMyReleased'); // 我的发布列表
-Route::any('my-request', 'InfoController@getMyRequest'); // 我的申请
-Route::any('detail', 'InfoController@getDetail'); // 车主详细信息
+// 发布车找人
+Route::any('create-car', 'InfoController@anyCreateCar');
+// 发布人找车
+Route::any('create-people', 'InfoController@anyCreatePeople');
 
+// 我的行程(车主)
+Route::get('my-trip-car', 'HomeController@getMyTripCar');
+// 我的行程(乘车人)
+Route::get('my-trip-people', 'HomeController@getMyTripPeople');
 
+// 车主确认已经拼满
+Route::get('full-people', 'InfoController@getFullPeople');
+// 乘车人确认已经找到车
+Route::get('find-car', 'InfoController@getFindCar');

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 use Lego\Lego;
+use Lego\Widget\Filter;
 
 class HomeController extends Controller
 {
@@ -24,63 +25,23 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function getCarFindPeople()
     {
-        $title = '拼车信息列表';
+        $title = '车找人列表';
 
-        $filter = Lego::filter(Info::where('start_at', '>=', Carbon::now()));
+        $filter = Lego::filter(Info::where('start_at', '>=', Carbon::now())
+            ->where('cate', Info::CATE_车找人)
+            ->where('status', Info::STATUS_进行中)
+        );
         $filter->addSelect('go_where', '行进方向')->values(Info::listGoWheres());
         $filter->addText('start', '出发地');
         $filter->addText('end', '目的地');
         $filter->addDatetimeRange('start_at', '出发时间');
-        $filter->addSelect('status', '信息状态')->values(Info::listStatus());
         $filter->addText('note', '补充');
-        $filter->addSelect('myReleased', '只显示我发布的信息')->values([Info::MY_我发布的信息])->scope('myReleased');
 
         $grid = Lego::grid($filter);
 
-        $grid->addLeftTopButton('新增新的信息', action('InfoController@anyCreateInfo'))
-            ->attribute('target', '_blank')
-            ->bootstrapStyle('info');
-        $grid->addLeftTopButton('修改历史信息', action('InfoController@getHistoryList'))
-            ->attribute('target', '_blank')
-            ->bootstrapStyle('default');
-        $grid->addLeftTopButton('我的申请', action('InfoController@getMyRequest'))
-            ->attribute('target', '_blank')
-            ->bootstrapStyle('success');
-        $grid->addRightTopButton('! 使用须知 !', action('HomeController@getHasKnow'))
-            ->attribute('target', '_blank')
-            ->bootstrapStyle('danger');
-
-        $grid->add('id', '操作')->cell(function ($_, Info $info) {
-            if (Auth::id() == $info->user_id) { // 发布人
-                if ($info->status === Info::STATUS_撤销) {
-                    return '';
-                }
-                $str = link_to(action('InfoController@anyCreateInfo', ['id' => $info->id]), '编辑', ['target' => '_blank']);
-                if ($info->status !== Info::STATUS_撤销) {
-                    $str .= ' | ' . link_to(action('InfoController@getWithdraw', ['id' => $info->id]), '撤回');
-                }
-                if (!$info->requests->isEmpty()) {
-                    $str .= ' | '  . link_to(action('InfoController@getRequestList', ['id' => $info->id]), '申请列表', ['target' => '_blank']);
-                }
-            } else { // 申请人
-                $request = $info->requests->where('user_id', Auth::id())->first();
-                $str = $request
-                    ? $request->status
-                    : ($info->status === Info::STATUS_撤销
-                        ? '撤回信息无法申请'
-                        : ($info->requests->where('status', \App\Request::STATUS_申请通过)->count() === $info->num
-                            ? new HtmlString("<span style='color:red'>!车满!</span>")
-                            : link_to(action('InfoController@getRequest', ['id' => $info->id]), '申请')));
-            }
-            return $str;
-        });
+        $grid->add('id', '编号');
         $grid->add('go_where', '行进方向');
         $grid->add('start', '出发地');
         $grid->add('end', '目的地');
@@ -97,16 +58,145 @@ class HomeController extends Controller
             ][$info->start_at->dayOfWeek] ?? null;
         });
         $grid->add('num', '座位数');
-        $grid->add('had_num', '已通过申请人数')->cell(function ($_, Info $info) {
-            return $info->requests->where('status', \App\Request::STATUS_申请通过)->count() === $info->num
-                ? new HtmlString("<span style='color:red'>!车满!</span>")
-                : $info->requests->where('status', \App\Request::STATUS_申请通过)->count();
+        $grid->add('mobile', '手机号')->cell(function ($_, Info $info) {
+            return link_to('tel:' . $info->mobile, '点击拨打');
         });
+        $grid->add('plate_number', '车牌号');
+        $grid->add('color', '车身颜色');
+        $grid->add('car_brand', '汽车品牌');
         $grid->add('amount_yuan', '费用(人)');
-        $grid->add('status', '信息状态');
         $grid->add('note', '补充');
+        $grid->paginate(15)->orderBy('start_at', 'desc');
 
-        $grid->paginate(30)->orderBy('start_at', 'desc');
+        return $grid->view('home', compact('title', 'grid'));
+    }
+
+    public function getPeopleFindCar()
+    {
+        $title = '人找车列表';
+
+        $filter = Lego::filter(Info::where('start_at', '>=', Carbon::now())
+            ->where('cate', Info::CATE_人找车)
+            ->where('status', Info::STATUS_进行中)
+        );
+        $filter->addSelect('go_where', '行进方向')->values(Info::listGoWheres());
+        $filter->addText('start', '出发地');
+        $filter->addText('end', '目的地');
+        $filter->addDatetimeRange('start_at', '出发时间');
+
+        $grid = Lego::grid($filter);
+
+        $grid->add('id', '编号');
+        $grid->add('go_where', '行进方向');
+        $grid->add('start', '出发地');
+        $grid->add('end', '目的地');
+        $grid->add('start_at', '出发时间');
+        $grid->add('weekend', '星期')->cell(function ($_, Info $info) {
+            return [
+                0 => '日',
+                1 => '一',
+                2 => '二',
+                3 => '三',
+                4 => '四',
+                5 => '五',
+                6 => '六',
+            ][$info->start_at->dayOfWeek] ?? null;
+        });
+        $grid->add('mobile', '手机号')->cell(function ($_, Info $info) {
+            return link_to('tel:' . $info->mobile, '点击拨打');
+        });
+        $grid->paginate(15)->orderBy('start_at', 'desc');
+
+        return $grid->view('home', compact('title', 'grid'));
+    }
+
+    /**
+     * 我的发布
+     */
+    public function getMyTripCar()
+    {
+        $title = '我的发布';
+
+        $grid = Lego::grid(Info::where('start_at', '>=', Carbon::now())
+            ->where('user_id', Auth::id())
+            ->where('cate', Info::CATE_车找人)
+        );
+
+        $grid->add('id', '操作')->cell(function ($_, Info $info) {
+            $str = '';
+            if ($info->status !== Info::STATUS_车满) {
+                $str = link_to(action('InfoController@getFullPeople', ['id' => $info->id]), '确认车已满', ['target' => '_blank']) . ' | ';
+
+            }
+            $str .= link_to(action('InfoController@anyCreateCar', ['id' => $info->id]), '编辑', ['target' => '_blank']);
+            return $str;
+        });
+        $grid->add('go_where', '行进方向');
+        $grid->add('start', '出发地');
+        $grid->add('end', '目的地');
+        $grid->add('status', '行程状态')->cell(function ($_, Info $info) {
+            if ($info->status === Info::STATUS_车满) {
+                return new HtmlString("<span style='color:red'>!车满!</span>");
+            }
+            return new HtmlString("<span style='color:green'>{$info->status}</span>");
+        });
+        $grid->add('start_at', '出发时间');
+        $grid->add('weekend', '星期')->cell(function ($_, Info $info) {
+            return [
+                0 => '日',
+                1 => '一',
+                2 => '二',
+                3 => '三',
+                4 => '四',
+                5 => '五',
+                6 => '六',
+            ][$info->start_at->dayOfWeek] ?? null;
+        });
+        $grid->add('num', '座位数');
+        $grid->add('mobile', '手机号');
+        $grid->add('plate_number', '车牌号');
+        $grid->add('color', '车身颜色');
+        $grid->add('car_brand', '汽车品牌');
+        $grid->add('amount_yuan', '费用(人)');
+        $grid->add('note', '补充');
+        $grid->paginate(15)->orderBy('start_at', 'desc');
+
+        return $grid->view('home', compact('title', 'grid'));
+    }
+
+    /**
+     * 我的寻车
+     */
+    public function getMyTripPeople()
+    {
+        $title = '我的寻车';
+
+        $grid = Lego::grid(Info::where('start_at', '>=', Carbon::now())
+            ->where('user_id', Auth::id())
+            ->where('cate', Info::CATE_人找车)
+        );
+
+        $grid->add('id', '操作')->cell(function ($_, Info $info) {
+            return link_to(action('InfoController@getFindCar', ['id' => $info->id]), '寻车成功', ['target' => '_blank']);
+        });
+        $grid->add('go_where', '行进方向');
+        $grid->add('start', '出发地');
+        $grid->add('end', '目的地');
+        $grid->add('start_at', '出发时间');
+        $grid->add('weekend', '星期')->cell(function ($_, Info $info) {
+            return [
+                0 => '日',
+                1 => '一',
+                2 => '二',
+                3 => '三',
+                4 => '四',
+                5 => '五',
+                6 => '六',
+            ][$info->start_at->dayOfWeek] ?? null;
+        });
+        $grid->add('mobile', '手机号');
+        $grid->add('note', '补充');
+        $grid->paginate(15)->orderBy('start_at', 'desc');
 
         return $grid->view('home', compact('title', 'grid'));
     }
