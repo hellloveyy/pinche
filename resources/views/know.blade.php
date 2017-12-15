@@ -26,9 +26,7 @@
                                 <hr>
                                 <div>
                                     <ol>
-                                        <li><a href="#">登录/注册/找回密码</a></li>
-                                        <li><a href="#">列表页以及主要流程</a></li>
-                                        <li><a href="#">创建发布信息|历史列表|我的申请</a></li>
+                                        <li><a href="http://7xnaaf.com1.z0.glb.clouddn.com/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BD%BF%E7%94%A8.pdf">大致功能</a></li>
                                     </ol>
                                 </div>
                             </div>

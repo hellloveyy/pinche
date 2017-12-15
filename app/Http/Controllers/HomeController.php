@@ -123,13 +123,11 @@ class HomeController extends Controller
         );
 
         $grid->add('id', '操作')->cell(function ($_, Info $info) {
-            $str = '';
-            if ($info->status !== Info::STATUS_车满) {
-                $str = link_to(action('InfoController@getFullPeople', ['id' => $info->id]), '确认车已满', ['target' => '_blank']) . ' | ';
-
-            }
-            $str .= link_to(action('InfoController@anyCreateCar', ['id' => $info->id]), '编辑', ['target' => '_blank']);
-            return $str;
+            return $info->status === Info::STATUS_车满
+                ? '当前状态为车满,无可用操作'
+                : (link_to(action('InfoController@getFullPeople', ['id' => $info->id]), '确认车已满', ['target' => '_blank'])
+                    . ' | '
+                    . link_to(action('InfoController@anyCreateCar', ['id' => $info->id]), '编辑', ['target' => '_blank']));
         });
         $grid->add('go_where', '行进方向');
         $grid->add('start', '出发地');
@@ -177,7 +175,11 @@ class HomeController extends Controller
         );
 
         $grid->add('id', '操作')->cell(function ($_, Info $info) {
-            return link_to(action('InfoController@getFindCar', ['id' => $info->id]), '寻车成功', ['target' => '_blank']);
+            return $info->status === Info::STATUS_寻车成功
+                ? '当前状态为寻车成功,无可用操作'
+                : (link_to(action('InfoController@anyCreatePeople', ['id' => $info->id]), '编辑', ['target' => '_blank'])
+                    . ' | '
+                    . link_to(action('InfoController@getFindCar', ['id' => $info->id]), '寻车成功', ['target' => '_blank']));
         });
         $grid->add('go_where', '行进方向');
         $grid->add('start', '出发地');
