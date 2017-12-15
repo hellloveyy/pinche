@@ -79,7 +79,7 @@ class InfoController extends Controller
      */
     public function anyCreatePeople()
     {
-        $title = '发布车找人';
+        $title = '发布人找车';
 
         $id = Input::get('id');
 
@@ -93,14 +93,8 @@ class InfoController extends Controller
             ->note('请大家维持原价');
         $edit->addDatetime('start_at', '出发时间')
             ->note('请仔细检查出发时间!');
-        $edit->addSelect('num', '空余座位数')
-            ->values(Info::listNumbers());
-        $edit->addText('plate_number', '车牌号');
-        $edit->addText('color', '车身颜色');
-        $edit->addText('car_brand', '汽车品牌');
         $edit->addText('mobile', '联系手机号');
-        $edit->addText('note', '补充信息')
-            ->note('包含途径点等信息,自由发挥');
+        $edit->addText('note', '补充信息');
         $edit->addHidden('user_id')->default(Auth::id());
         $edit->addHidden('cate')->default(Info::CATE_人找车);
         $edit->required();
