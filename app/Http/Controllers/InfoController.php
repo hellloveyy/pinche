@@ -42,7 +42,7 @@ class InfoController extends Controller
         $edit->addText('end', '目的地');
         $edit->addNumber('amount_yuan', '费用(人)')
             ->note('请大家维持原价');
-        $edit->addDatetime('start_at', '出发时间')
+        $edit->addDatetime('start_at', '出发时间')->disableNativePicker()
             ->note('请仔细检查出发时间!');
         $edit->addSelect('num', '空余座位数')
             ->values(Info::listNumbers());
@@ -91,7 +91,7 @@ class InfoController extends Controller
         $edit->addText('end', '目的地');
         $edit->addNumber('amount_yuan', '费用(人)')
             ->note('请大家维持原价');
-        $edit->addDatetime('start_at', '出发时间')
+        $edit->addDatetime('start_at', '出发时间')->disableNativePicker()
             ->note('请仔细检查出发时间!');
         $edit->addText('mobile', '联系手机号');
         $edit->addText('note', '补充信息');
