@@ -127,7 +127,10 @@ class HomeController extends Controller
                 ? '当前状态为车满,无可用操作'
                 : (link_to(action('InfoController@getFullPeople', ['id' => $info->id]), '确认车已满', ['target' => '_blank'])
                     . ' | '
-                    . link_to(action('InfoController@anyCreateCar', ['id' => $info->id]), '编辑', ['target' => '_blank']));
+                    . link_to(action('InfoController@anyCreateCar', ['id' => $info->id]), '编辑', ['target' => '_blank'])
+                    . ' | '
+                    . link_to(action('InfoController@anyRevokeCar', ['id' => $info->id]), '撤销行程', ['target' => '_blank'])
+                );
         });
         $grid->add('go_where', '行进方向');
         $grid->add('start', '出发地');
@@ -135,6 +138,9 @@ class HomeController extends Controller
         $grid->add('status', '行程状态')->cell(function ($_, Info $info) {
             if ($info->status === Info::STATUS_车满) {
                 return new HtmlString("<span style='color:red'>!车满!</span>");
+            }
+            if ($info->status === Info::STATUS_撤销) {
+                return new HtmlString("<span style='color:red'>!撤销!</span>");
             }
             return new HtmlString("<span style='color:green'>{$info->status}</span>");
         });
@@ -179,12 +185,24 @@ class HomeController extends Controller
                 ? '当前状态为寻车成功,无可用操作'
                 : (link_to(action('InfoController@anyCreatePeople', ['id' => $info->id]), '编辑', ['target' => '_blank'])
                     . ' | '
-                    . link_to(action('InfoController@getFindCar', ['id' => $info->id]), '寻车成功', ['target' => '_blank']));
+                    . link_to(action('InfoController@getFindCar', ['id' => $info->id]), '寻车成功', ['target' => '_blank'])
+                    . ' | '
+                    . link_to(action('InfoController@getRevokePeople', ['id' => $info->id]), '撤销寻车', ['target' => '_blank'])
+                );
         });
         $grid->add('go_where', '行进方向');
         $grid->add('start', '出发地');
         $grid->add('end', '目的地');
         $grid->add('start_at', '出发时间');
+        $grid->add('status', '寻车状态')->cell(function ($_, Info $info) {
+            if ($info->status === Info::STATUS_寻车成功) {
+                return new HtmlString("<span style='color:red'>!寻车成功!</span>");
+            }
+            if ($info->status === Info::STATUS_撤销) {
+                return new HtmlString("<span style='color:red'>!撤销!</span>");
+            }
+            return new HtmlString("<span style='color:green'>{$info->status}</span>");
+        });
         $grid->add('weekend', '星期')->cell(function ($_, Info $info) {
             return [
                 0 => '日',

@@ -42,7 +42,7 @@ class InfoController extends Controller
         $edit->addText('end', '目的地');
         $edit->addNumber('amount_yuan', '费用(人)')
             ->note('请大家维持原价');
-        $edit->addDatetime('start_at', '出发时间')->disableNativePicker()
+        $edit->addDatetime('start_at', '出发时间')
             ->note('请仔细检查出发时间!');
         $edit->addSelect('num', '空余座位数')
             ->values(Info::listNumbers());
@@ -71,6 +71,9 @@ class InfoController extends Controller
                 );
             }
         });
+        $edit->success(function (Info $info) {
+            return redirect(action('InfoController@anyCreateCar', ['id' => $info->id]));
+        });
         return $edit->view('info.info', compact('title', 'edit'));
     }
 
@@ -91,13 +94,16 @@ class InfoController extends Controller
         $edit->addText('end', '目的地');
         $edit->addNumber('amount_yuan', '费用(人)')
             ->note('请大家维持原价');
-        $edit->addDatetime('start_at', '出发时间')->disableNativePicker()
+        $edit->addDatetime('start_at', '出发时间')
             ->note('请仔细检查出发时间!');
         $edit->addText('mobile', '联系手机号');
         $edit->addText('note', '补充信息');
         $edit->addHidden('user_id')->default(Auth::id());
         $edit->addHidden('cate')->default(Info::CATE_人找车);
         $edit->required();
+        $edit->success(function (Info $info) {
+            return redirect(action('InfoController@anyCreatePeople', ['id' => $info->id]));
+        });
 
         return $edit->view('info.info', compact('title', 'edit'));
     }
@@ -190,5 +196,47 @@ class InfoController extends Controller
         );
     }
 
+    /**
+     * 撤销行程
+     */
+    public function getRevokeCar()
+    {
+        $info = Info::find(Input::get('id'));
+        if (!$info) {
+            return Lego::message(
+                '没有此条信息,请在列表中重新选择'
+            );
+        }
+        return Lego::confirm(
+            '请确认已经撤销发布此条行程?此操作不可逆,确认之后将在乘客的车找人列表中下架!',
+            function ($sure) use ($info) {
+                if ($sure) {
+                    $info->status = Info::STATUS_撤销;
+                    $info->saveOrFail();
+                }
+            }
+        );
+    }
 
+    /**
+     * 撤销寻车
+     */
+    public function getRevokePeople()
+    {
+        $info = Info::find(Input::get('id'));
+        if (!$info) {
+            return Lego::message(
+                '没有此条信息,请在列表中重新选择'
+            );
+        }
+        return Lego::confirm(
+            '请确认已经撤销发布此条寻车?此操作不可逆,确认之后将在车主的人找车列表中下架!',
+            function ($sure) use ($info) {
+                if ($sure) {
+                    $info->status = Info::STATUS_撤销;
+                    $info->saveOrFail();
+                }
+            }
+        );
+    }
 }

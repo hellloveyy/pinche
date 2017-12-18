@@ -36,3 +36,7 @@ Route::get('my-trip-people', 'HomeController@getMyTripPeople');
 Route::get('full-people', 'InfoController@getFullPeople');
 // 乘车人确认已经找到车
 Route::get('find-car', 'InfoController@getFindCar');
+
+// 撤销
+Route::get('revoke-car', 'InfoController@getRevokeCar');
+Route::get('revoke-people', 'InfoController@getRevokePeople');
