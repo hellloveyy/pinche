@@ -26,7 +26,7 @@
                                 <hr>
                                 <div>
                                     <ol>
-                                        <li><a href="http://7xnaaf.com1.z0.glb.clouddn.com/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E4%BD%BF%E7%94%A8.pdf">大致功能</a></li>
+                                        <li><a href="http://7xnaaf.com1.z0.glb.clouddn.com/pinche2.pdf">大致功能</a></li>
                                     </ol>
                                 </div>
                             </div>
@@ -36,7 +36,7 @@
                                 <div>
                                     <ul>
                                         <li>
-                                            <a href="https://v.qq.com/x/page/i0516k6v2mr.html">公众号使用流程准备中...</a>
+                                            <a href="#">公众号使用流程准备中...</a>
                                         </li>
                                     </ul>
                                 </div>

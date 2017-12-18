@@ -42,7 +42,7 @@ class InfoController extends Controller
         $edit->addText('end', '目的地');
         $edit->addNumber('amount_yuan', '费用(人)')
             ->note('请大家维持原价');
-        $edit->addDatetime('start_at', '出发时间')
+        $edit->addDatetime('start_at', '出发时间')->disableNativePicker()
             ->note('请仔细检查出发时间!');
         $edit->addSelect('num', '空余座位数')
             ->values(Info::listNumbers());
@@ -71,8 +71,8 @@ class InfoController extends Controller
                 );
             }
         });
-        $edit->success(function (Info $info) {
-            return redirect(action('InfoController@anyCreateCar', ['id' => $info->id]));
+        $edit->success(function () {
+            return redirect(action('HomeController@getPeopleFindCar'));
         });
         return $edit->view('info.info', compact('title', 'edit'));
     }
@@ -94,15 +94,15 @@ class InfoController extends Controller
         $edit->addText('end', '目的地');
         $edit->addNumber('amount_yuan', '费用(人)')
             ->note('请大家维持原价');
-        $edit->addDatetime('start_at', '出发时间')
+        $edit->addDatetime('start_at', '出发时间')->disableNativePicker()
             ->note('请仔细检查出发时间!');
         $edit->addText('mobile', '联系手机号');
         $edit->addText('note', '补充信息');
         $edit->addHidden('user_id')->default(Auth::id());
         $edit->addHidden('cate')->default(Info::CATE_人找车);
         $edit->required();
-        $edit->success(function (Info $info) {
-            return redirect(action('InfoController@anyCreatePeople', ['id' => $info->id]));
+        $edit->success(function () {
+            return redirect(action('HomeController@getCarFindPeople'));
         });
 
         return $edit->view('info.info', compact('title', 'edit'));
