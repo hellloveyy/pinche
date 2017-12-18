@@ -9,6 +9,7 @@ use Collective\Html\HtmlFacade;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
+use Laracasts\Flash\Flash;
 use Lego\Lego;
 use Whoops\Exception\ErrorException;
 
@@ -71,8 +72,9 @@ class InfoController extends Controller
                 );
             }
         });
-        $edit->success(function () {
-            return redirect(action('HomeController@getPeopleFindCar'));
+        $edit->success(function (Info $info) {
+            Flash::success('发布成功!');
+            return redirect(action('InfoController@anyCreateCar', ['id' => $info->id]));
         });
         return $edit->view('info.info', compact('title', 'edit'));
     }
@@ -101,8 +103,9 @@ class InfoController extends Controller
         $edit->addHidden('user_id')->default(Auth::id());
         $edit->addHidden('cate')->default(Info::CATE_人找车);
         $edit->required();
-        $edit->success(function () {
-            return redirect(action('HomeController@getCarFindPeople'));
+        $edit->success(function (Info $info) {
+            Flash::success('发布成功!');
+            return redirect(action('InfoController@anyCreatePeople', ['id' => $info->id]));
         });
 
         return $edit->view('info.info', compact('title', 'edit'));
