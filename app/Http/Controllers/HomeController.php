@@ -123,8 +123,8 @@ class HomeController extends Controller
         );
 
         $grid->add('id', '操作')->cell(function ($_, Info $info) {
-            return $info->status === Info::STATUS_车满
-                ? '当前状态为车满,无可用操作'
+            return in_array($info->status, [Info::STATUS_撤销, Info::STATUS_车满])
+                ? '当前状态无可用操作'
                 : (link_to(action('InfoController@getFullPeople', ['id' => $info->id]), '确认车已满', ['target' => '_blank'])
                     . ' | '
                     . link_to(action('InfoController@anyCreateCar', ['id' => $info->id]), '编辑', ['target' => '_blank'])
@@ -181,8 +181,8 @@ class HomeController extends Controller
         );
 
         $grid->add('id', '操作')->cell(function ($_, Info $info) {
-            return $info->status === Info::STATUS_寻车成功
-                ? '当前状态为寻车成功,无可用操作'
+            return in_array($info->status, [Info::STATUS_撤销, Info::STATUS_寻车成功])
+                ? '当前状态无可用操作'
                 : (link_to(action('InfoController@anyCreatePeople', ['id' => $info->id]), '编辑', ['target' => '_blank'])
                     . ' | '
                     . link_to(action('InfoController@getFindCar', ['id' => $info->id]), '寻车成功', ['target' => '_blank'])
