@@ -129,7 +129,7 @@ class HomeController extends Controller
                     . ' | '
                     . link_to(action('InfoController@anyCreateCar', ['id' => $info->id]), '编辑', ['target' => '_blank'])
                     . ' | '
-                    . link_to(action('InfoController@anyRevokeCar', ['id' => $info->id]), '撤销行程', ['target' => '_blank'])
+                    . link_to(action('InfoController@getRevokeCar', ['id' => $info->id]), '撤销行程', ['target' => '_blank'])
                 );
         });
         $grid->add('go_where', '行进方向');
