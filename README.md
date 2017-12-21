@@ -1,4 +1,9 @@
 # pinche
+
+## Required
+  - php >= 7.0
+  - nginx
+  
 ## 使用步骤：
 ### 1、fork,然后 clone 一份
 ### 2、根据实际使用的邮件提供商配置 env 文件，我用的是 mailgun
