@@ -15,6 +15,7 @@ Auth::routes();
 
 Route::get('/', 'UserController@getMyInfo');
 Route::get('know', 'HomeController@getHasKnow');
+Route::get('disclaimer', 'HomeController@getDisclaimer');
 Route::any('history', 'InfoController@getHistoryList');
 
 // 车找人

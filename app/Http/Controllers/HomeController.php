@@ -227,4 +227,10 @@ class HomeController extends Controller
         $title = '使用须知';
         return view('know', compact('title'));
     }
+
+    public function getDisclaimer()
+    {
+        $title = '免责声明';
+        return view('disclaimer', compact('title'));
+    }
 }
