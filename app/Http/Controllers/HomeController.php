@@ -33,9 +33,15 @@ class HomeController extends Controller
 
         $grid->add('id', '编号');
         $grid->add('go_where', '行进方向');
-        $grid->add('start', '出发地');
-        $grid->add('end', '目的地');
-        $grid->add('start_at', '出发时间');
+        $grid->add('start', '出发地')->cell(function ($_, Info $info) {
+            return new HtmlString("<span style='color:red'>{$info->start}</span>");
+        });
+        $grid->add('end', '目的地')->cell(function ($_, Info $info) {
+            return new HtmlString("<span style='color:red'>{$info->end}</span>");
+        });
+        $grid->add('start_at', '出发时间')->cell(function ($_, Info $info) {
+            return new HtmlString("<span style='color:red'>{$info->start_at}</span>");
+        });
         $grid->add('weekend', '星期')->cell(function ($_, Info $info) {
             return [
                 0 => '日',
