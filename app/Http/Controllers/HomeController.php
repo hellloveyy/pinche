@@ -15,16 +15,6 @@ use Lego\Widget\Filter;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function getCarFindPeople()
     {
         $title = '车找人列表';
@@ -116,6 +106,7 @@ class HomeController extends Controller
      */
     public function getMyTripCar()
     {
+        $this->middleware('auth');
         $title = '我的发布';
 
         $grid = Lego::grid(Info::where('start_at', '>=', Carbon::now())
@@ -174,6 +165,7 @@ class HomeController extends Controller
      */
     public function getMyTripPeople()
     {
+        $this->middleware('auth');
         $title = '我的寻车';
 
         $grid = Lego::grid(Info::where('start_at', '>=', Carbon::now())
