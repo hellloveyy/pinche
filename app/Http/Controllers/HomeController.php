@@ -55,7 +55,7 @@ class HomeController extends Controller
         });
         $grid->add('num', '座位数');
         $grid->add('mobile', '手机号')->cell(function ($_, Info $info) {
-            return link_to('tel:' . $info->mobile, '点击拨打');
+            return link_to('tel:' . $info->mobile, '点击拨打', ['class' => 'btn btn-outline btn-info btn-xs callmobile', 'data-infoid' => "{$info->id}"]);
         });
         $grid->add('plate_number', '车牌号');
         $grid->add('color', '车身颜色');

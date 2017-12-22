@@ -78,5 +78,14 @@
     <!-- Scripts -->
 {{--    <script src="{{ asset('js/app.js') }}"></script>--}}
     @include('lego::scripts')
+    <script>
+        $(document).ready(function () {
+            //打电话记录第一个打电话的销售和时间
+            $('.callmobile').click(function () {
+                $infoId = $(this).data('infoid');
+                $.get('{{action('CallRequestController@getCalled')}}' + '?infoId=' + $infoId)
+            });
+        });
+    </script>
 </body>
 </html>

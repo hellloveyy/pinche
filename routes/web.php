@@ -17,6 +17,7 @@ Route::get('/', 'UserController@getMyInfo');
 Route::get('know', 'HomeController@getHasKnow');
 Route::get('disclaimer', 'HomeController@getDisclaimer');
 Route::any('history', 'InfoController@getHistoryList');
+Route::get('call', 'CallRequestController@getCalled');
 
 // 车找人
 Route::get('car-find-people', 'HomeController@getCarFindPeople');
