@@ -47,9 +47,9 @@ class InfoController extends Controller
             ->note('请仔细检查出发时间!');
         $edit->addSelect('num', '空余座位数')
             ->values(Info::listNumbers());
-        $edit->addText('plate_number', '车牌号');
-        $edit->addText('color', '车身颜色');
-        $edit->addText('car_brand', '汽车品牌');
+//        $edit->addText('plate_number', '车牌号');
+//        $edit->addText('color', '车身颜色');
+//        $edit->addText('car_brand', '汽车品牌');
         $edit->addText('mobile', '联系手机号');
         $edit->addText('note', '补充信息')
             ->note('包含途径点等信息,自由发挥');
