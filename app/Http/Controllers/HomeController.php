@@ -31,7 +31,7 @@ class HomeController extends Controller
 
         $grid = Lego::grid($filter);
 
-        $grid->add('id', '编号');
+//        $grid->add('id', '编号');
         $grid->add('go_where', '行进方向');
         $grid->add('start', '出发地')->cell(function ($_, Info $info) {
             return new HtmlString("<span style='color:red'>{$info->start}</span>");
@@ -82,7 +82,7 @@ class HomeController extends Controller
 
         $grid = Lego::grid($filter);
 
-        $grid->add('id', '编号');
+//        $grid->add('id', '编号');
         $grid->add('go_where', '行进方向');
         $grid->add('start', '出发地')->cell(function ($_, Info $info) {
             return new HtmlString("<span style='color:red'>{$info->start}</span>");
