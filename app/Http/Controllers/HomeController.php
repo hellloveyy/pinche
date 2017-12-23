@@ -31,7 +31,6 @@ class HomeController extends Controller
 
         $grid = Lego::grid($filter);
 
-//        $grid->add('id', '编号');
         $grid->add('go_where', '行进方向');
         $grid->add('start', '出发地')->cell(function ($_, Info $info) {
             return new HtmlString("<span style='color:red'>{$info->start}</span>");
@@ -62,7 +61,7 @@ class HomeController extends Controller
 //        $grid->add('car_brand', '汽车品牌');
         $grid->add('amount_yuan', '费用(人)');
         $grid->add('note', '途径点信息');
-        $grid->paginate(15)->orderBy('start_at', 'desc');
+        $grid->paginate(15)->orderBy('start_at', 'asc');
 
         return $grid->view('home', compact('title', 'grid'));
     }
@@ -82,7 +81,6 @@ class HomeController extends Controller
 
         $grid = Lego::grid($filter);
 
-//        $grid->add('id', '编号');
         $grid->add('go_where', '行进方向');
         $grid->add('start', '出发地')->cell(function ($_, Info $info) {
             return new HtmlString("<span style='color:red'>{$info->start}</span>");
@@ -108,7 +106,7 @@ class HomeController extends Controller
             return link_to('tel:' . $info->mobile, '点击拨打');
         });
         $grid->add('note', '补充信息');
-        $grid->paginate(15)->orderBy('start_at', 'desc');
+        $grid->paginate(15)->orderBy('start_at', 'asc');
 
         return $grid->view('home', compact('title', 'grid'));
     }
@@ -162,9 +160,9 @@ class HomeController extends Controller
         });
         $grid->add('num', '座位数');
         $grid->add('mobile', '手机号');
-        $grid->add('plate_number', '车牌号');
-        $grid->add('color', '车身颜色');
-        $grid->add('car_brand', '汽车品牌');
+//        $grid->add('plate_number', '车牌号');
+//        $grid->add('color', '车身颜色');
+//        $grid->add('car_brand', '汽车品牌');
         $grid->add('amount_yuan', '费用(人)');
         $grid->add('note', '补充');
         $grid->paginate(15)->orderBy('start_at', 'desc');

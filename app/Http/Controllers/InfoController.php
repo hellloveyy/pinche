@@ -133,9 +133,9 @@ class InfoController extends Controller
         });
         $grid->add('num', '座位数');
         $grid->add('mobile', '手机号');
-        $grid->add('plate_number', '车牌号');
-        $grid->add('color', '车身颜色');
-        $grid->add('car_brand', '汽车品牌');
+//        $grid->add('plate_number', '车牌号');
+//        $grid->add('color', '车身颜色');
+//        $grid->add('car_brand', '汽车品牌');
         $grid->add('amount_yuan', '费用(人)');
         $grid->add('note', '补充');
         $grid->paginate(15)->orderBy('start_at', 'desc');
