@@ -61,7 +61,7 @@ class HomeController extends Controller
 //        $grid->add('car_brand', '汽车品牌');
         $grid->add('amount_yuan', '费用(人)');
         $grid->add('note', '途径点信息');
-        $grid->paginate(15)->orderBy('start_at', 'desc');
+        $grid->paginate(15)->orderBy('start_at');
 
         return $grid->view('home', compact('title', 'grid'));
     }
@@ -165,7 +165,7 @@ class HomeController extends Controller
 //        $grid->add('car_brand', '汽车品牌');
         $grid->add('amount_yuan', '费用(人)');
         $grid->add('note', '补充');
-        $grid->paginate(15)->orderBy('start_at', 'desc');
+        $grid->paginate(15)->orderBy('start_at');
 
         return $grid->view('home', compact('title', 'grid'));
     }
@@ -219,7 +219,7 @@ class HomeController extends Controller
         });
         $grid->add('mobile', '手机号');
         $grid->add('note', '补充');
-        $grid->paginate(15)->orderBy('start_at', 'desc');
+        $grid->paginate(15)->orderBy('start_at');
 
         return $grid->view('home', compact('title', 'grid'));
     }
