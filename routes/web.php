@@ -21,6 +21,8 @@ Route::get('call', 'CallRequestController@getCalled');
 
 // 车找人
 Route::get('car-find-people', 'HomeController@getCarFindPeople');
+// 微信车找人
+Route::get('wechat-infos', 'HomeController@getWechatInfos');
 // 人找车
 Route::get('people-find-car', 'HomeController@getPeopleFindCar');
 

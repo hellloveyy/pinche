@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Info;
+use App\InsertWechatDetail;
 use App\User;
 use Carbon\Carbon;
 use Encore\Admin\Form\Field\Html;
@@ -220,6 +221,24 @@ class HomeController extends Controller
         $grid->add('mobile', '手机号');
         $grid->add('note', '补充');
         $grid->paginate(15)->orderBy('start_at');
+
+        return $grid->view('home', compact('title', 'grid'));
+    }
+
+    /**
+     * 机器人收集信息
+     */
+    public function getWechatInfos()
+    {
+        $title = '机器人收集信息';
+        $filter = Lego::filter(InsertWechatDetail::where('date', Carbon::today()->toDateString())->orderBy('mobile'));
+        $filter->addText('detail', '搜索地点');
+
+        $grid = Lego::grid($filter);
+
+        $grid->add('mobile', '手机号');
+        $grid->add('detail', '信息');
+        $grid->paginate(30);
 
         return $grid->view('home', compact('title', 'grid'));
     }
