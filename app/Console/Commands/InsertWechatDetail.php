@@ -39,7 +39,7 @@ class InsertWechatDetail extends Command
      */
     public function handle()
     {
-        $text = file_get_contents('/root/wechat_rb/wechat.log.'.Carbon::today()->toDateString().'.log');
+        $text = file_get_contents('/root/wechat_rb/wechat.log');
         if (!$text) {
             return;
         }
