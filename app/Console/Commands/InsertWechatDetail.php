@@ -60,6 +60,9 @@ class InsertWechatDetail extends Command
             if (\App\InsertWechatDetail::where('detail', $detail)->where('date', Carbon::today()->toDateString())->exists()) {
                 continue;
             }
+            if (!$mobile) {
+                continue;
+            }
             $wechat = new \App\InsertWechatDetail();
             $wechat->detail = $detail;
             $wechat->mobile = $mobile[1];
