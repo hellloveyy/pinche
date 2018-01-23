@@ -43,7 +43,7 @@ class InsertWechatDetail extends Command
         if (!$text) {
             return;
         }
-        $array = explode('||', $text);
+        $array = explode('INFO:root:||', $text);
 
         foreach ($array as $k => $value) {
             // 去掉多余日志
