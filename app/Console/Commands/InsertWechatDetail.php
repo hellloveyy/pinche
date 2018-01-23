@@ -61,11 +61,13 @@ class InsertWechatDetail extends Command
             // 检测是否在当天库里面  内容一致的不入库
             $reg='/\D(?:86)?(\d{11})\D/is';//匹配数字的正则表达式
             preg_match($reg, $detail, $mobile);
+            Log::info($mobile);
             if (!$mobile) {
                 continue;
             }
             $num = \App\InsertWechatDetail::where('mobile', $mobile[1])->where('date', Carbon::today()->toDateString())->count();
-            if (Carbon::now()->hour > 20) {
+            Log::info($num);
+            if (Carbon::now()->hour >= 20) {
                 if ($num >= 2) {
                     continue;
                 }
@@ -74,6 +76,7 @@ class InsertWechatDetail extends Command
                     continue;
                 }
             }
+            Log::info(1111);
             $wechat = new \App\InsertWechatDetail();
             $wechat->detail = $detail;
             $wechat->mobile = $mobile[1];
