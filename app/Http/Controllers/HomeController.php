@@ -236,7 +236,9 @@ class HomeController extends Controller
 
         $grid = Lego::grid($filter);
 
-        $grid->add('mobile', '手机号');
+        $grid->add('mobile', '手机号')->cell(function ($_, InsertWechatDetail $info) {
+            return link_to('tel:' . $info->mobile, '点击拨打', ['class' => 'btn btn-outline btn-info btn-xs']);
+        });
         $grid->add('detail', '信息');
         $grid->paginate(30);
 
