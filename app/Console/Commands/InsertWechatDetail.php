@@ -50,7 +50,11 @@ class InsertWechatDetail extends Command
             $detail = is_numeric(strpos($value, 'INFO:itchat:'))
                 ? substr_replace($value, '', strpos($value, 'INFO:itchat:'))
                 : $value;
-            if (!$detail) {
+            // 去掉itchat 错误日志
+            $detail = is_numeric(strpos($detail, 'ERROR:itchat:'))
+                ? substr_replace($detail, '', strpos($detail, 'ERROR:itchat:'))
+                : $detail;
+            if (!$detail = trim($detail)) {
                 continue;
             }
 
