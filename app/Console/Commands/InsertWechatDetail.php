@@ -64,8 +64,19 @@ class InsertWechatDetail extends Command
             if (!$mobile) {
                 continue;
             }
-
-            if (\App\InsertWechatDetail::where('mobile', $mobile[0])->where('date', Carbon::today()->toDateString())->count()) {
+            $num = \App\InsertWechatDetail::where('mobile', $mobile[0])->where('date', Carbon::today()->toDateString())->count();
+            if (Carbon::now()->hour >= 20) {
+                if ($num >= 2) {
+                    continue;
+                }
+            } else {
+                if ($num >= 1) {
+                    continue;
+                }
+            }
+            if (\App\InsertWechatDetail::where('mobile', $mobile[0])
+                ->where('detail', $detail)
+                ->where('date', Carbon::today()->toDateString())->count()) {
                 continue;
             }
             $wechat = new \App\InsertWechatDetail();
